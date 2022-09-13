@@ -7,10 +7,7 @@ import com.example.week7project.dto.request.StatusRequestDto;
 
 import com.example.week7project.dto.response.*;
 
-import com.example.week7project.repository.ChatRoomRepository;
-import com.example.week7project.repository.MemberRepository;
-import com.example.week7project.repository.PostRepository;
-import com.example.week7project.repository.PurchaseListRepository;
+import com.example.week7project.repository.*;
 import com.example.week7project.security.TokenProvider;
 import com.example.week7project.time.Time;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +27,7 @@ public class PostService {
     private final TokenProvider tokenProvider;
     private final PurchaseListRepository purchaseListRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final FilesRepository filesRepository;
 
     // 피드백 : if문에서 return이 있다면 else를 굳이 넣으시지 않으셔도 됩니다.
 
@@ -100,20 +98,17 @@ public class PostService {
         // 유저 테이블에서 유저객체 가져오기
         Member updateMember = memberRepository.findByNickname(member.getNickname()).get();
 
-//  //      List<String> ImageList = postRequestDto.getImageUrl();
-//        List<ImageFile> imageFiles = new ArrayList<>();
-//        for(String str : list) {
-//           ImageFile imageFile = ImageFile.builder()
-//                   .url(str)
-//                   .build();
-//           imageFiles.add(imageFile);
-//        }
+        String[] ImageList = postRequestDto.getImageUrl();
+        List<ImageFile> imageFiles = new ArrayList<>();
+        for(String url : ImageList) {
+           imageFiles.add(filesRepository.findByUrl(url));
+        }
 
         Post post = Post.builder()
                 .title(postRequestDto.getTitle())
                 .status("판매중")
                 .price(postRequestDto.getPrice())
-                .imageFile(null)
+                .imageFile(imageFiles)
                 .category(Category.valueOf(postRequestDto.getCategory()))
                 .content(postRequestDto.getContent())
                 .numOfChat(0)
@@ -176,6 +171,13 @@ public class PostService {
         if (post.validateMember(updateMember))
             return ResponseDto.fail("작성자가 아닙니다.");
 
+        String[] imageList = requestDto.getImageUrl();
+        List<ImageFile> imageFiles = new ArrayList<>();
+        for(String url : imageList) {
+            imageFiles.add(filesRepository.findByUrl(url));
+        }
+
+        post.updateImg(imageFiles);
         post.updatePost(requestDto);
         return ResponseDto.success(
                 TimePostResponseDto.builder()

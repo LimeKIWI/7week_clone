@@ -3,11 +3,9 @@ package com.example.week7project.domain;
 import com.example.week7project.domain.enums.Category;
 import com.example.week7project.dto.request.PostRequestDto;
 import com.example.week7project.dto.request.StatusRequestDto;
-import com.example.week7project.dto.response.ResponseDto;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -57,21 +55,14 @@ public class Post extends Timestamped{
     private Member member;
 
     public void updatePost(PostRequestDto postRequestDto) {
-
-//        List<String> ImageList = postRequestDto.getImageUrl();
-//        List<ImageFile> imageFiles = new ArrayList<>();
-//        for(String str : ImageList) {
-//            ImageFile imageFile = ImageFile.builder()
-//                    .url(str)
-//                    .build();
-//            imageFiles.add(imageFile);
-//        }
-
         this.title = postRequestDto.getTitle();
         this.category = Category.valueOf(postRequestDto.getCategory());
-//        this.imageFile = imageFiles;
         this.price = postRequestDto.getPrice();
         this.content = postRequestDto.getContent();
+    }
+
+    public void updateImg(List<ImageFile> imageFile) {
+        this.imageFile = imageFile;
     }
 
     public void changeStatus(StatusRequestDto requestDto) {

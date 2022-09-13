@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -13,7 +13,7 @@ import java.util.List;
 public class PostRequestDto {
     private String title;
     private Long price;
- //   private List<String> imageUrl;
+    private String[] imageUrl;
     private String category;
     private String content;
 }
