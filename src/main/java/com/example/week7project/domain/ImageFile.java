@@ -19,10 +19,8 @@ public class ImageFile {
     private Long Id;
 
     @Column
-    private String imageName;
-
-    @Column
     private String url;
+
 
 }
 

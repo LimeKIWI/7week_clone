@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,23 +29,27 @@ public class FileService {
     private final MemberRepository memberRepository;
     // 이미지 업로드
     @Transactional
-    public ResponseDto<?> uploadImage(MultipartFile file, HttpServletRequest request) {
+    public ResponseDto<?> uploadImage(List<MultipartFile> files, HttpServletRequest request) {
         // 로그인 확인
         ResponseDto<?> chkResponse =  validateCheck(request);
         if(!chkResponse.isSuccess())
             return chkResponse;
 
-        ResponseDto<?> result = amazonS3Service.uploadFile(file);
-        if(!result.isSuccess())
-            return result;
-        ImageFile imageFile = (ImageFile)result.getData();
+        List<String> imageUrls = new ArrayList<>();
+        for(MultipartFile file : files) {
+            ResponseDto<?> result = amazonS3Service.uploadFile(file);
+            if (!result.isSuccess())
+                return result;
+            ImageFile imageFile = (ImageFile) result.getData();
+            imageUrls.add(imageFile.getUrl());
+        }
 
-        return ResponseDto.success(imageFile.getUrl());
+        return ResponseDto.success(imageUrls);
     }
 
     // 이미지 수정
     @Transactional
-    public ResponseDto<?> updateImage(Long id, MultipartFile file, HttpServletRequest request) {
+    public ResponseDto<?> updateImage(Long id, List<MultipartFile> files, HttpServletRequest request) {
         // 로그인 확인
         ResponseDto<?> chkResponse =  validateCheck(request);
         if(!chkResponse.isSuccess())
@@ -58,15 +64,21 @@ public class FileService {
         if(getPost.get().validateMember(updateMember))
             return ResponseDto.fail("작성자가 아닙니다.");
 
-        ImageFile getCurrentFile = filesRepository.findByUrl(getPost.get().getImageUrl());
-        filesRepository.deleteById(getCurrentFile.getId());
+        List<ImageFile> imageFiles = getPost.get().getImageFile();
+        for(ImageFile imageFile : imageFiles) {
+            ImageFile getCurrentFile = filesRepository.findByUrl(imageFile.getUrl());
+            filesRepository.deleteById(getCurrentFile.getId());
+        }
 
-        ResponseDto<?> result = amazonS3Service.uploadFile(file);
-        if(!result.isSuccess())
-            return result;
-        ImageFile imageFile = (ImageFile)result.getData();
-
-        return ResponseDto.success(imageFile.getUrl());
+        List<String> imageUrls = new ArrayList<>();
+        for(MultipartFile file : files) {
+            ResponseDto<?> result = amazonS3Service.uploadFile(file);
+            if(!result.isSuccess())
+                return result;
+            ImageFile imageFile = (ImageFile)result.getData();
+            imageUrls.add(imageFile.getUrl());
+        }
+        return ResponseDto.success(imageUrls);
     }
 
     // 이미지 삭제

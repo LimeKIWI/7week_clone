@@ -1,9 +1,12 @@
 package com.example.week7project.dto.response;
 
+import com.example.week7project.domain.ImageFile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -17,7 +20,7 @@ public class TimePostResponseDto {
     private String category;
     private String nickname;
     private String address;
-    private String imgUrl;
+    private List<ImageFile> imgUrl;
     private String time;
     private long price;
     private String content;

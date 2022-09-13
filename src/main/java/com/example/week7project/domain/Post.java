@@ -7,6 +7,8 @@ import com.example.week7project.dto.response.ResponseDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -30,8 +32,9 @@ public class Post extends Timestamped{
     @Enumerated (EnumType.STRING)
     private Category category;
 
-    @Column
-    private String imageUrl;
+    @JoinColumn(name = "image_files")
+    @OneToMany (fetch = FetchType.LAZY)
+    private List<ImageFile> imageFile;
 
     @Column (nullable = false)
     private long price;
@@ -54,9 +57,19 @@ public class Post extends Timestamped{
     private Member member;
 
     public void updatePost(PostRequestDto postRequestDto) {
+
+//        List<String> ImageList = postRequestDto.getImageUrl();
+//        List<ImageFile> imageFiles = new ArrayList<>();
+//        for(String str : ImageList) {
+//            ImageFile imageFile = ImageFile.builder()
+//                    .url(str)
+//                    .build();
+//            imageFiles.add(imageFile);
+//        }
+
         this.title = postRequestDto.getTitle();
         this.category = Category.valueOf(postRequestDto.getCategory());
-        this.imageUrl = postRequestDto.getImageUrl();
+//        this.imageFile = imageFiles;
         this.price = postRequestDto.getPrice();
         this.content = postRequestDto.getContent();
     }

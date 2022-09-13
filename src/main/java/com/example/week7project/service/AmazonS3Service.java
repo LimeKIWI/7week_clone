@@ -54,7 +54,6 @@ public class AmazonS3Service {
         }
         ImageFile imageMapper = ImageFile.builder()                         // 업로드한 파일들을 관리할 테이블에 파일이름, URL넣기
                 .url(amazonS3Client.getUrl(bucketName, fileName).toString())
-                .imageName(fileName)
                 .build();
         filesRepository.save(imageMapper);
         return ResponseDto.success(imageMapper);
@@ -66,17 +65,17 @@ public class AmazonS3Service {
     }
 
     //파일삭제
-    @Transactional
-    public boolean removeFile(String fileName) {
-        Optional<ImageFile> optionalImageMapper = filesRepository.findByImageName(fileName); // 파일이름으로 파일가져오기
-        if (optionalImageMapper.isEmpty())    // 실제있는 파일인지 확인
-            return true;
-        ImageFile image = optionalImageMapper.get();
-        filesRepository.deleteById(image.getId());    // imageMapper에서 삭제
-        DeleteObjectRequest request = new DeleteObjectRequest(bucketName, fileName); // 삭제 request생성
-        amazonS3Client.deleteObject(request);      // s3에서 파일삭제
-        return false;
-    }
+//    @Transactional
+//    public boolean removeFile(String fileName) {
+//        Optional<ImageFile> optionalImageMapper = filesRepository.findByImageName(fileName); // 파일이름으로 파일가져오기
+//        if (optionalImageMapper.isEmpty())    // 실제있는 파일인지 확인
+//            return true;
+//        ImageFile image = optionalImageMapper.get();
+//        filesRepository.deleteById(image.getId());    // imageMapper에서 삭제
+//        DeleteObjectRequest request = new DeleteObjectRequest(bucketName, fileName); // 삭제 request생성
+//        amazonS3Client.deleteObject(request);      // s3에서 파일삭제
+//        return false;
+//    }
 
     //실제있는 파일인지 확인
     private boolean validateFileExists(MultipartFile multipartFile) {

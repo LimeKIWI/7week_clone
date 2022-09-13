@@ -1,9 +1,6 @@
 package com.example.week7project.service;
 
-import com.example.week7project.domain.ChatRoom;
-import com.example.week7project.domain.Member;
-import com.example.week7project.domain.Post;
-import com.example.week7project.domain.PurchaseList;
+import com.example.week7project.domain.*;
 import com.example.week7project.domain.enums.Category;
 import com.example.week7project.dto.request.PostRequestDto;
 import com.example.week7project.dto.request.StatusRequestDto;
@@ -49,7 +46,7 @@ public class PostService {
             postResponseDtoList.add(TimePostListResponseDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
-                    .imgUrl(post.getImageUrl())
+                    .imgUrl(post.getImageFile())
                     .time(Time.convertLocaldatetimeToTime(post.getCreatedAt()))
                     .price(post.getPrice())
                     .numOfChat(post.getNumOfChat())
@@ -80,7 +77,7 @@ public class PostService {
                         .category(post.getCategory().toString())
                         .nickname(member.getNickname())
                         .address(member.getAddress())
-                        .imgUrl(post.getImageUrl())
+                        .imgUrl(post.getImageFile())
                         .time(Time.convertLocaldatetimeToTime(post.getCreatedAt()))
                         .price(post.getPrice())
                         .content(post.getContent())
@@ -103,11 +100,20 @@ public class PostService {
         // 유저 테이블에서 유저객체 가져오기
         Member updateMember = memberRepository.findByNickname(member.getNickname()).get();
 
+//  //      List<String> ImageList = postRequestDto.getImageUrl();
+//        List<ImageFile> imageFiles = new ArrayList<>();
+//        for(String str : list) {
+//           ImageFile imageFile = ImageFile.builder()
+//                   .url(str)
+//                   .build();
+//           imageFiles.add(imageFile);
+//        }
+
         Post post = Post.builder()
                 .title(postRequestDto.getTitle())
                 .status("판매중")
                 .price(postRequestDto.getPrice())
-                .imageUrl(postRequestDto.getImageUrl())
+                .imageFile(null)
                 .category(Category.valueOf(postRequestDto.getCategory()))
                 .content(postRequestDto.getContent())
                 .numOfChat(0)
@@ -144,7 +150,7 @@ public class PostService {
         return ResponseDto.success(TimePostListResponseDto.builder()
                 .id(post.getId())
                 .title(post.getTitle())
-                .imgUrl(post.getImageUrl())
+                .imgUrl(post.getImageFile())
                 .price(post.getPrice())
                 .time(Time.convertLocaldatetimeToTime(post.getCreatedAt()))
                 .numOfChat(post.getNumOfChat())
@@ -180,7 +186,7 @@ public class PostService {
                         .category(post.getCategory().toString())
                         .nickname(updateMember.getNickname())
                         .address(updateMember.getAddress())
-                        .imgUrl(post.getImageUrl())
+                        .imgUrl(post.getImageFile())
                         .price(post.getPrice())
                         .content(post.getContent())
                         .time(Time.convertLocaldatetimeToTime(post.getCreatedAt()))
@@ -261,7 +267,7 @@ public class PostService {
             MyPostDto myPostDto = MyPostDto.builder()
                     .id(p.getId())
                     .title(p.getTitle())
-                    .imgUrl(p.getImageUrl())
+                    .imgUrl(p.getImageFile())
                     .price(p.getPrice())
                     .build();
             postDtoList.add(myPostDto);
@@ -281,7 +287,7 @@ public class PostService {
             MyPostDto myPostDto = MyPostDto.builder()
                     .id(p.getId())
                     .title(p.getTitle())
-                    .imgUrl(p.getImageUrl())
+                    .imgUrl(p.getImageFile())
                     .price(p.getPrice())
                     .build();
             postDtoList.add(myPostDto);
